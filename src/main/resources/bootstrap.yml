@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: auth
+  cloud:
+    config:
+      uri: http://sundial.benbenedu.cn:8888
