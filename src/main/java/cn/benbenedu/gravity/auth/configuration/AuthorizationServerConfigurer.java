@@ -1,7 +1,7 @@
 package cn.benbenedu.gravity.auth.configuration;
 
-import cn.benbenedu.gravity.auth.model.Client;
-import cn.benbenedu.gravity.auth.model.ClientState;
+import cn.benbenedu.sundial.account.model.Client;
+import cn.benbenedu.sundial.account.model.ClientState;
 import cn.benbenedu.gravity.auth.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

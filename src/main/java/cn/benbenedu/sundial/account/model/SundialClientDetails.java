@@ -1,4 +1,4 @@
-package cn.benbenedu.gravity.auth.model;
+package cn.benbenedu.sundial.account.model;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

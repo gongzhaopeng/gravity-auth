@@ -1,8 +1,8 @@
 package cn.benbenedu.gravity.auth.configuration;
 
-import cn.benbenedu.gravity.auth.model.Account;
-import cn.benbenedu.gravity.auth.model.AccountRole;
-import cn.benbenedu.gravity.auth.model.AccountState;
+import cn.benbenedu.sundial.account.model.Account;
+import cn.benbenedu.sundial.account.model.AccountRole;
+import cn.benbenedu.sundial.account.model.AccountState;
 import cn.benbenedu.gravity.auth.repository.AccountRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

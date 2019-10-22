@@ -1,4 +1,4 @@
-package cn.benbenedu.gravity.auth.model;
+package cn.benbenedu.sundial.account.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

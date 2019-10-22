@@ -1,6 +1,6 @@
 package cn.benbenedu.gravity.auth.service;
 
-import cn.benbenedu.gravity.auth.model.SundialClientDetails;
+import cn.benbenedu.sundial.account.model.SundialClientDetails;
 import cn.benbenedu.gravity.auth.repository.ClientRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.provider.ClientDetails;

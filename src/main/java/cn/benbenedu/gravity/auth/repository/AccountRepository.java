@@ -1,6 +1,6 @@
 package cn.benbenedu.gravity.auth.repository;
 
-import cn.benbenedu.gravity.auth.model.Account;
+import cn.benbenedu.sundial.account.model.Account;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
