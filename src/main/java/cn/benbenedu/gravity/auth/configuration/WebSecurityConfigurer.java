@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,6 +46,27 @@ public class WebSecurityConfigurer
 
         auth.userDetailsService(userDetailsService);
     }
+
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//
+//        http
+//                // 必须配置，不然OAuth2的http配置不生效----不明觉厉
+//                .requestMatchers()
+//                .and()
+//                .authorizeRequests()
+//                // 自定义页面或处理url是，如果不配置全局允许，浏览器会提示服务器将页面转发多次
+//                .antMatchers("/auth/login", "/oauth/*")
+//                .permitAll();
+//
+//        // 表单登录
+//        http.formLogin()
+//                // 登录页面
+//                .loginPage("/auth/login")
+//                // 登录处理url
+//                .loginProcessingUrl("/oauth/authorize");
+//        http.httpBasic().disable();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
