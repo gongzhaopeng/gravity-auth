@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LoginController {
 
-    @GetMapping("/auth/login")
+    @GetMapping("/login")
     public String loginPage(Model model) {
-        model.addAttribute("loginProcessUrl", "/oauth/authorize");
+        model.addAttribute("loginProcessUrl", "/login");
         return "base-login";
     }
 }

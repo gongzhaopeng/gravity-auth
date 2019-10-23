@@ -47,26 +47,12 @@ public class WebSecurityConfigurer
         auth.userDetailsService(userDetailsService);
     }
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//
-//        http
-//                // 必须配置，不然OAuth2的http配置不生效----不明觉厉
-//                .requestMatchers()
-//                .and()
-//                .authorizeRequests()
-//                // 自定义页面或处理url是，如果不配置全局允许，浏览器会提示服务器将页面转发多次
-//                .antMatchers("/auth/login", "/oauth/*")
-//                .permitAll();
-//
-//        // 表单登录
-//        http.formLogin()
-//                // 登录页面
-//                .loginPage("/auth/login")
-//                // 登录处理url
-//                .loginProcessingUrl("/oauth/authorize");
-//        http.httpBasic().disable();
-//    }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.formLogin()
+                .loginPage("/login");
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
