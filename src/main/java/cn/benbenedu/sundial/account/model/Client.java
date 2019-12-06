@@ -23,11 +23,11 @@ public class Client {
     private Long createTime;
     @JsonProperty("lUTime")
     private Long lUTime;
-    private Creator creator;
+    private AccountBrief creator;
 
     private ClientState state;
 
-    private Owner owner;
+    private AccountBrief owner;
     private String clientSecret;
     private Set<String> scope = Set.of();
     private Set<String> resourceIds = Set.of();

@@ -1,4 +1,4 @@
-package cn.benbenedu.sundial.account.model;
+package cn.benbenedu.gravity.auth.model;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,25 +28,26 @@ public class SundialClientDetails implements ClientDetails {
     private Integer refreshTokenValiditySeconds;
     private Map<String, Object> additionalInformation;
 
+
     /**
      * TODO
      *
-     * @param client
+     * @param clientAuthParams
      * @return
      */
-    public static SundialClientDetails of(Client client) {
+    public static SundialClientDetails of(SundialClientAuthParams clientAuthParams) {
 
         final var clientDetails = new SundialClientDetails();
-        clientDetails.setClientId(client.getClientId());
-        clientDetails.setClientSecret(client.getClientSecret());
-        clientDetails.setScope(client.getScope());
-        clientDetails.setResourceIds(client.getResourceIds());
-        clientDetails.setAuthorizedGrantTypes(client.getAuthorizedGrantTypes());
-        clientDetails.setRegisteredRedirectUri(client.getRegisteredRedirectUris());
-        clientDetails.setAutoApproveScopes(client.getAutoApproveScopes());
-        clientDetails.setAuthorities(client.getAuthorities());
-        clientDetails.setAccessTokenValiditySeconds(client.getAccessTokenValiditySeconds());
-        clientDetails.setRefreshTokenValiditySeconds(client.getRefreshTokenValiditySeconds());
+        clientDetails.setClientId(clientAuthParams.getClientId());
+        clientDetails.setClientSecret(clientAuthParams.getClientSecret());
+        clientDetails.setScope(clientAuthParams.getScope());
+        clientDetails.setResourceIds(clientAuthParams.getResourceIds());
+        clientDetails.setAuthorizedGrantTypes(clientAuthParams.getAuthorizedGrantTypes());
+        clientDetails.setRegisteredRedirectUri(clientAuthParams.getRegisteredRedirectUris());
+        clientDetails.setAutoApproveScopes(clientAuthParams.getAutoApproveScopes());
+        clientDetails.setAuthorities(clientAuthParams.getAuthorities());
+        clientDetails.setAccessTokenValiditySeconds(clientAuthParams.getAccessTokenValiditySeconds());
+        clientDetails.setRefreshTokenValiditySeconds(clientAuthParams.getRefreshTokenValiditySeconds());
 
         return clientDetails;
     }

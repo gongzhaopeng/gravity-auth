@@ -1,5 +1,7 @@
-package cn.benbenedu.sundial.account.model;
+package cn.benbenedu.gravity.auth.model;
 
+import cn.benbenedu.sundial.account.model.AccountState;
+import cn.benbenedu.sundial.account.model.AccountType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.CredentialsContainer;
@@ -15,26 +17,27 @@ import java.util.stream.Collectors;
 public class SundialUserDetails
         implements UserDetails, CredentialsContainer {
 
-    public static SundialUserDetails of(Account account) {
+    public static SundialUserDetails of(SundialUserAuthParams userAuthParams) {
 
         final var userDetails = new SundialUserDetails();
 
-        userDetails.setPassword(account.getPassword());
-        userDetails.setId(account.getId());
-        userDetails.setName(account.getName());
-        userDetails.setNickname(account.getNickname());
+        userDetails.setPassword(userAuthParams.getPassword());
+        userDetails.setId(userAuthParams.getId());
+        userDetails.setType(userAuthParams.getType());
+        userDetails.setName(userAuthParams.getName());
+        userDetails.setNickname(userAuthParams.getNickname());
         userDetails.setAuthorities(
-                Optional.ofNullable(account.getRoles())
+                Optional.ofNullable(userAuthParams.getRoles())
                         .map(roles -> roles.stream().map(
                                 role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role))
                                 .collect(Collectors.toSet()))
                         .orElse(Set.of()));
-        userDetails.setAccountNonExpired(account.getState() != AccountState.Abandoned);
-        userDetails.setAccountNonLocked(account.getState() != AccountState.Locked);
+        userDetails.setAccountNonExpired(userAuthParams.getState() != AccountState.Abandoned);
+        userDetails.setAccountNonLocked(userAuthParams.getState() != AccountState.Locked);
         userDetails.setCredentialsNonExpired(true);
         userDetails.setEnabled(
-                account.getState() != AccountState.Unactivated &&
-                        account.getState() != AccountState.Disabled);
+                userAuthParams.getState() != AccountState.Unactivated &&
+                        userAuthParams.getState() != AccountState.Disabled);
 
         return userDetails;
     }
@@ -48,6 +51,7 @@ public class SundialUserDetails
     private boolean credentialsNonExpired;
     private boolean enabled;
 
+    private AccountType type;
     private String name;
     private String nickname;
 

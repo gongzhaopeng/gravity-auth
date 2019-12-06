@@ -12,7 +12,7 @@ public class WechatInfo {
     @Data
     public static class WechatLogin {
 
-        private Long timestamp;
+        private Long loginAt;
         private String accessToken;
         private Long expiresAt;
         private String refreshToken;

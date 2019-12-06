@@ -1,5 +1,6 @@
 package cn.benbenedu.gravity.auth.repository;
 
+import cn.benbenedu.gravity.auth.model.SundialUserAuthParams;
 import cn.benbenedu.sundial.account.model.Account;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -10,11 +11,11 @@ import java.util.Optional;
 public interface AccountRepository
         extends MongoRepository<Account, String> {
 
-    boolean existsByMobile(String mobile);
+    Optional<SundialUserAuthParams> findUserAuthParamsById(String id);
 
-    boolean existsByIdNumberOrMobileOrEmail(
-            String idNumber, String mobile, String email);
+    Optional<SundialUserAuthParams> findUserAuthParamsByMobile(String mobile);
 
-    Optional<Account> findByIdNumberOrMobileOrEmail(
-            String idNumber, String mobile, String email);
+    Optional<SundialUserAuthParams> findUserAuthParamsByEmail(String email);
+
+    Optional<SundialUserAuthParams> findUserAuthParamsByIdNumber(String idNumber);
 }

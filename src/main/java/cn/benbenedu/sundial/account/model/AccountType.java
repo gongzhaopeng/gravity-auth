@@ -4,6 +4,8 @@ public enum AccountType {
 
     Personal,
     Organization,
+    AgencyL3,
     AgencyL2,
-    AgencyL1
+    AgencyL1,
+    Inner
 }

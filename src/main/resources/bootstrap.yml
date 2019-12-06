@@ -1,6 +1,6 @@
 spring:
   application:
-    name: auth
+    name: authdev
   cloud:
     config:
       uri: http://sundial.benbenedu.cn:8888

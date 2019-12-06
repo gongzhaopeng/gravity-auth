@@ -1,57 +1,59 @@
 package cn.benbenedu.gravity.auth.configuration;
 
-import cn.benbenedu.sundial.account.model.Client;
-import cn.benbenedu.sundial.account.model.ClientState;
+import cn.benbenedu.gravity.auth.model.SundialUserDetails;
 import cn.benbenedu.gravity.auth.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
-import java.util.Set;
+import java.util.Map;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfigurer
         extends AuthorizationServerConfigurerAdapter {
 
-    private ClientRepository clientRepository;
     private ClientDetailsService clientDetailsService;
     private AuthenticationManager authenticationManager;
     private UserDetailsService userDetailsService;
     private RedisConnectionFactory redisConnectionFactory;
 
+    private ClientRepository clientRepository;
+
     @Autowired
     public AuthorizationServerConfigurer(
-            ClientRepository clientRepository,
             ClientDetailsService clientDetailsService,
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
-            RedisConnectionFactory redisConnectionFactory) {
+            RedisConnectionFactory redisConnectionFactory,
+            ClientRepository clientRepository) {
 
-        this.clientRepository = clientRepository;
         this.clientDetailsService = clientDetailsService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.redisConnectionFactory = redisConnectionFactory;
+
+        this.clientRepository = clientRepository;
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients)
             throws Exception {
-
-        initSundialCoreClient();
 
         clients.withClientDetails(clientDetailsService);
     }
@@ -63,6 +65,8 @@ public class AuthorizationServerConfigurer
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
                 .tokenStore(tokenStore());
+
+        endpoints.accessTokenConverter(accessTokenConverter());
     }
 
     @Override
@@ -80,36 +84,67 @@ public class AuthorizationServerConfigurer
         return new RedisTokenStore(redisConnectionFactory);
     }
 
-    private void initSundialCoreClient() {
+    @Bean
+    public AccessTokenConverter accessTokenConverter() {
 
-        final var coreClientId = "__SUNDIAL_CORE_CLIENT__";
+        final var accessTokenConverter = new DefaultAccessTokenConverter() {
 
-        if (clientRepository.existsById(coreClientId)) {
-            return;
-        }
+            private static final String CLIENT = "client";
+            private static final String CLIENT_OWNER = "owner";
 
-        final var coreClient = new Client();
-        coreClient.setClientId(coreClientId);
-        /**
-         * TODO External the configuration of Sundial-core-client-secret.
-         */
-        coreClient.setClientSecret("LET_THERE_BE_LIGHT");
-        coreClient.setAuthorizedGrantTypes(Set.of(
-                "refresh_token",
-                "password",
-                "client_credentials",
-                "authorization_code"
-        ));
-        coreClient.setScope(Set.of(
-                "client:inner",
-                "client:partner",
-                "client:public"
-        ));
-        coreClient.setRegisteredRedirectUris(Set.of(
-                "https://www.baidu.com"
-        ));
-        coreClient.setState(ClientState.Active);
+            @Override
+            public Map<String, ?> convertAccessToken(
+                    OAuth2AccessToken token,
+                    OAuth2Authentication authentication) {
 
-        clientRepository.save(coreClient);
+                final var response =
+                        (Map<String, Object>) super.convertAccessToken(token, authentication);
+
+                clientRepository.findClientAuthParamsByClientId(
+                        authentication.getOAuth2Request().getClientId())
+                        .map(params ->
+                                response.put(CLIENT, Map.of(
+                                        CLIENT_OWNER, params.getOwner().getId()
+                                ))
+                        );
+
+                return response;
+            }
+        };
+
+        accessTokenConverter.setUserTokenConverter(userAuthenticationConverter());
+
+        return accessTokenConverter;
+    }
+
+    @Bean
+    public UserAuthenticationConverter userAuthenticationConverter() {
+
+        return new DefaultUserAuthenticationConverter() {
+
+            private static final String USER = "user";
+            private static final String USER_TYPE = "type";
+            private static final String USER_NAME = "name";
+            private static final String USER_NICKNAME = "nickname";
+
+            @Override
+            public Map<String, ?> convertUserAuthentication(
+                    Authentication authentication) {
+
+                final var response =
+                        (Map<String, Object>) super.convertUserAuthentication(authentication);
+
+                final var sundialUserDetails =
+                        (SundialUserDetails) authentication.getPrincipal();
+
+                response.put(USER, Map.of(
+                        USER_TYPE, sundialUserDetails.getType(),
+                        USER_NAME, sundialUserDetails.getName(),
+                        USER_NICKNAME, sundialUserDetails.getNickname()
+                ));
+
+                return response;
+            }
+        };
     }
 }

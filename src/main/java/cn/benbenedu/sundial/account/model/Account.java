@@ -9,6 +9,7 @@ import org.springframework.security.core.CredentialsContainer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Document("Account")
@@ -19,28 +20,38 @@ public class Account implements CredentialsContainer {
     private Long createTime;
     @JsonProperty("lUTime")
     private Long lUTime;
-    private Creator creator;
+    private AccountBrief creator;
 
     private AccountState state;
 
     private AccountAffiliation affiliation;
+
     private String idNumber;
+    private Boolean identified;
     private String mobile;
+    private Boolean mobileVerified;
     private String email;
+    private Boolean emailVerified;
     private String password;
+
     private WechatInfo wechat;
+
     private AccountType type;
+
     private String name;
     private String nickname;
     private AccountGender gender;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
-    private String country;
-    private String province;
-    private String city;
+    private AccountAddress address;
+
     private String avatar;
+
     private List<AccountRole> roles;
-    private List<AccountEchain> echains;
+
+    private StudyingStatus studyingStatus;
+
+    private Map<String, String> extInfo;
 
     @Override
     public void eraseCredentials() {

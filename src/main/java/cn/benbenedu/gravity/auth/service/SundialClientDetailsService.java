@@ -1,6 +1,6 @@
 package cn.benbenedu.gravity.auth.service;
 
-import cn.benbenedu.sundial.account.model.SundialClientDetails;
+import cn.benbenedu.gravity.auth.model.SundialClientDetails;
 import cn.benbenedu.gravity.auth.repository.ClientRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -26,9 +26,9 @@ public class SundialClientDetailsService
     public ClientDetails loadClientByClientId(String clientId)
             throws ClientRegistrationException {
 
-        return clientRepository.findById(clientId)
+        return clientRepository.findClientAuthParamsByClientId(clientId)
                 .map(SundialClientDetails::of)
                 .orElseThrow(() ->
-                        new NoSuchClientException("No client with requested id: " + clientId));
+                        new NoSuchClientException("No client with provided id: " + clientId));
     }
 }
