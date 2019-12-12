@@ -49,7 +49,6 @@ public class WebSecurityConfigurer
 
         http.formLogin()
                 .loginPage("http://sundial.benbenedu.cn:9001/authdev/login");
-//                .loginPage("/login");
 
         http.formLogin()
                 .loginProcessingUrl("/login");

@@ -10,7 +10,6 @@ public class LoginController {
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginProcessUrl", "/authdev/login");
-//        model.addAttribute("loginProcessUrl", "/login");
         return "base-login";
     }
 }
