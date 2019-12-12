@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.endpoint.WhitelabelApprovalEndpoint;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
@@ -76,7 +77,7 @@ public class AuthorizationServerConfigurer
         security.passwordEncoder(NoOpPasswordEncoder.getInstance());
 
         security.allowFormAuthenticationForClients();
-        security.checkTokenAccess("permitAll()");
+        security.checkTokenAccess("isAuthenticated()");
     }
 
     @Bean

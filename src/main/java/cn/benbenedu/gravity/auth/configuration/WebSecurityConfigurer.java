@@ -9,6 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.util.UrlUtils;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 public class WebSecurityConfigurer
@@ -40,7 +48,47 @@ public class WebSecurityConfigurer
     protected void configure(HttpSecurity http) throws Exception {
 
         http.formLogin()
-                .loginPage("/login");
+                .loginPage("http://sundial.benbenedu.cn:9001/authdev/login");
+//                .loginPage("/login");
+
+        http.formLogin()
+                .loginProcessingUrl("/login");
+
+        final var successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setRedirectStrategy(new DefaultRedirectStrategy() {
+
+            @Override
+            public void sendRedirect(
+                    HttpServletRequest request, HttpServletResponse response, String url)
+                    throws IOException {
+
+                final var convertedUrl = convertRedirectUrlForGateway(request, url);
+
+                super.sendRedirect(request, response, convertedUrl);
+            }
+
+            private String convertRedirectUrlForGateway(
+                    HttpServletRequest request, String url) {
+
+                if (UrlUtils.isAbsoluteUrl(url)) {
+
+                    final var xForwardedProto = request.getHeader("x-forwarded-proto");
+                    final var xForwardedHost = request.getHeader("x-forwarded-host");
+                    final var xForwardedPrefix = request.getHeader("x-forwarded-prefix");
+
+                    if (StringUtils.hasLength(xForwardedProto) &&
+                            StringUtils.hasLength(xForwardedHost) &&
+                            StringUtils.hasLength(xForwardedPrefix)) {
+
+                        return xForwardedProto + "://" + xForwardedHost + xForwardedPrefix +
+                                url.substring(url.indexOf("/", url.indexOf("://") + 3));
+                    }
+                }
+
+                return url;
+            }
+        });
+        http.formLogin().successHandler(successHandler);
     }
 
     @Bean
