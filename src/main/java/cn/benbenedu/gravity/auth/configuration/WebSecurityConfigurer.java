@@ -1,5 +1,6 @@
 package cn.benbenedu.gravity.auth.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,9 @@ import java.io.IOException;
 @Configuration
 public class WebSecurityConfigurer
         extends WebSecurityConfigurerAdapter {
+
+    @Value("spring.security.login-page")
+    private String loginPage;
 
     private UserDetailsService userDetailsService;
 
@@ -48,7 +52,7 @@ public class WebSecurityConfigurer
     protected void configure(HttpSecurity http) throws Exception {
 
         http.formLogin()
-                .loginPage("http://sundial.benbenedu.cn:9001/xauth/login");
+                .loginPage(loginPage);
 
         http.formLogin()
                 .loginProcessingUrl("/login");
