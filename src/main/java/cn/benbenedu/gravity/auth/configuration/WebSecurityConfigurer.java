@@ -23,7 +23,7 @@ import java.io.IOException;
 public class WebSecurityConfigurer
         extends WebSecurityConfigurerAdapter {
 
-    @Value("spring.security.login-page")
+    @Value("${spring.security.login-page}")
     private String loginPage;
 
     private UserDetailsService userDetailsService;
