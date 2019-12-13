@@ -9,7 +9,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginPage(Model model) {
-        model.addAttribute("loginProcessUrl", "/authdev/login");
+        model.addAttribute("loginProcessUrl", "/xauth/login");
         return "base-login";
     }
 }

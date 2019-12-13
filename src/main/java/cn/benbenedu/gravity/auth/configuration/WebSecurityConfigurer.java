@@ -48,7 +48,7 @@ public class WebSecurityConfigurer
     protected void configure(HttpSecurity http) throws Exception {
 
         http.formLogin()
-                .loginPage("http://sundial.benbenedu.cn:9001/authdev/login");
+                .loginPage("http://sundial.benbenedu.cn:9001/xauth/login");
 
         http.formLogin()
                 .loginProcessingUrl("/login");
