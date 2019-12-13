@@ -18,10 +18,10 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.endpoint.WhitelabelApprovalEndpoint;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -103,10 +103,15 @@ public class AuthorizationServerConfigurer
 
                 clientRepository.findClientAuthParamsByClientId(
                         authentication.getOAuth2Request().getClientId())
-                        .map(params ->
-                                response.put(CLIENT, Map.of(
-                                        CLIENT_OWNER, params.getOwner().getId()
-                                ))
+                        .ifPresent(params -> {
+
+                                    final var clientInfo = new HashMap<String, Object>();
+                                    if (params.getOwner() != null) {
+                                        clientInfo.put(CLIENT_OWNER, params.getOwner().getId());
+                                    }
+
+                                    response.put(CLIENT, clientInfo);
+                                }
                         );
 
                 return response;
@@ -138,11 +143,12 @@ public class AuthorizationServerConfigurer
                 final var sundialUserDetails =
                         (SundialUserDetails) authentication.getPrincipal();
 
-                response.put(USER, Map.of(
-                        USER_TYPE, sundialUserDetails.getType(),
-                        USER_NAME, sundialUserDetails.getName(),
-                        USER_NICKNAME, sundialUserDetails.getNickname()
-                ));
+                final var userInfo = new HashMap<String, Object>();
+                userInfo.put(USER_TYPE, sundialUserDetails.getType());
+                userInfo.put(USER_NAME, sundialUserDetails.getName());
+                userInfo.put(USER_NICKNAME, sundialUserDetails.getNickname());
+
+                response.put(USER, userInfo);
 
                 return response;
             }

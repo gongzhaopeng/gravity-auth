@@ -15,7 +15,7 @@ import java.util.Set;
  * Reference: org.springframework.security.oauth2.provider.client.BaseClientDetails
  */
 @Data
-@Document("Client")
+@Document("client")
 public class Client {
 
     @Id

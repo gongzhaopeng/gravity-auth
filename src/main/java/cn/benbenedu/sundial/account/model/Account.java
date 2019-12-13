@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@Document("Account")
+@Document("account")
 public class Account implements CredentialsContainer {
 
     @Id
