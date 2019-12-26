@@ -1,8 +1,6 @@
 package cn.benbenedu.gravity.auth.service;
 
-import cn.benbenedu.gravity.auth.model.SundialUserAuthParams;
 import cn.benbenedu.gravity.auth.model.SundialUserDetails;
-import cn.benbenedu.gravity.auth.repository.AccountRepository;
 import cn.benbenedu.utility.EmailUtility;
 import cn.benbenedu.utility.IdentityUtility;
 import cn.benbenedu.utility.MobileUtility;
@@ -20,36 +18,33 @@ import java.util.Optional;
 public class SundialUserDetailsService
         implements UserDetailsService {
 
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     public SundialUserDetailsService(
-            AccountRepository accountRepository) {
+            AccountService accountService) {
 
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final var userAuthParams = getUserAuthParamsByUsername(username);
-
-        return userAuthParams
-                .map(SundialUserDetails::of)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("No Account with provided username: " + username));
+        return getUserDetailsByUsername(username);
     }
 
-    private Optional<SundialUserAuthParams> getUserAuthParamsByUsername(String username)
+    private SundialUserDetails getUserDetailsByUsername(String username)
             throws UsernameNotFoundException {
 
         if (ObjectId.isValid(username)) {
-            return accountRepository.findUserAuthParamsById(username);
+            return Optional.ofNullable(accountService.getUserDetailsById(username))
+                    .orElseThrow(() ->
+                            new UsernameNotFoundException("No Account with provided id: " + username));
         } else if (MobileUtility.isWellFormedMobileNumber(username)) {
-            return accountRepository.findUserAuthParamsByMobile(username);
+            return accountService.getUserDetailsByMobile(username);
         } else if (EmailUtility.isWellFormedEmailAddress(username)) {
-            return accountRepository.findUserAuthParamsByEmail(username);
+            return accountService.getUserDetailsByEmail(username);
         } else if (IdentityUtility.isWellFormedIdNumber(username)) {
-            return accountRepository.findUserAuthParamsByIdNumber(username);
+            return accountService.getUserDetailsByIdNumber(username);
         } else {
             throw new UsernameNotFoundException(
                     "Unrecognized style within provided username: " + username);
