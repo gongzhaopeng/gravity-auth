@@ -35,9 +35,7 @@ public class SundialUserDetails
         userDetails.setAccountNonExpired(userAuthParams.getState() != AccountState.Abandoned);
         userDetails.setAccountNonLocked(userAuthParams.getState() != AccountState.Locked);
         userDetails.setCredentialsNonExpired(true);
-        userDetails.setEnabled(
-                userAuthParams.getState() != AccountState.Unactivated &&
-                        userAuthParams.getState() != AccountState.Disabled);
+        userDetails.setEnabled(userAuthParams.getState() == AccountState.Active);
 
         return userDetails;
     }
@@ -68,6 +66,5 @@ public class SundialUserDetails
     }
 
     public void eraseCredentials() {
-        password = null;
     }
 }
