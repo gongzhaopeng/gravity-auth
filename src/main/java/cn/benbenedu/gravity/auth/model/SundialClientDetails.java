@@ -4,10 +4,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Reference: org.springframework.security.oauth2.provider.client.BaseClientDetails
@@ -69,5 +66,12 @@ public class SundialClientDetails implements ClientDetails {
     public boolean isScoped() {
         return this.scope != null &&
                 !this.scope.isEmpty();
+    }
+
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+
+        return authorities == null ?
+                List.of() : authorities;
     }
 }
