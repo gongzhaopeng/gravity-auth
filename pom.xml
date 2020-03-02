@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>xauth</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <name>auth</name>
     <description>Gravity:Auth.</description>
 

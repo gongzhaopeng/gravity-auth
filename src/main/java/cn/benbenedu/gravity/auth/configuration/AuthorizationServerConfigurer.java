@@ -7,7 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -20,7 +23,10 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,11 +69,15 @@ public class AuthorizationServerConfigurer
     public void configure(AuthorizationServerEndpointsConfigurer endpoints)
             throws Exception {
 
+        final var tokenStore = tokenStore();
+
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .tokenStore(tokenStore());
+                .tokenStore(tokenStore);
 
         endpoints.accessTokenConverter(accessTokenConverter());
+
+        endpoints.tokenServices(customTokenServices(tokenStore));
     }
 
     @Override
@@ -153,5 +163,29 @@ public class AuthorizationServerConfigurer
                 return response;
             }
         };
+    }
+
+    private AuthorizationServerTokenServices customTokenServices(TokenStore tokenStore) {
+
+        final var tokenServices = new CustomTokenServices();
+
+        tokenServices.setTokenStore(tokenStore);
+        tokenServices.setSupportRefreshToken(true);
+        tokenServices.setReuseRefreshToken(true);
+        tokenServices.setClientDetailsService(this.clientDetailsService);
+        tokenServices.setTokenEnhancer(null);
+        addUserDetailsService(tokenServices, this.userDetailsService);
+
+        return tokenServices;
+    }
+
+    private void addUserDetailsService(CustomTokenServices tokenServices, UserDetailsService userDetailsService) {
+        if (userDetailsService != null) {
+            PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+            provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken>(
+                    userDetailsService));
+            tokenServices
+                    .setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
+        }
     }
 }
