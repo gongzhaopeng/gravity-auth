@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
 public class CustomTokenServices implements AuthorizationServerTokenServices, ResourceServerTokenServices,
         ConsumerTokenServices, InitializingBean {
 
-    private final static int ACCESS_TOKEN_PRE_RENEW_SPAN = 60 * 60; // 30 minutes.
+    private final static int ACCESS_TOKEN_PRE_RENEW_SPAN = 30 * 60; // 30 minutes.
 
     private int refreshTokenValiditySeconds = 60 * 60 * 24 * 30; // default 30 days.
 

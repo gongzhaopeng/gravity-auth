@@ -1,5 +1,6 @@
 package cn.benbenedu.gravity.auth.model;
 
+import cn.benbenedu.sundial.account.model.Account;
 import cn.benbenedu.sundial.account.model.AccountState;
 import cn.benbenedu.sundial.account.model.AccountType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,25 +18,25 @@ import java.util.stream.Collectors;
 public class SundialUserDetails
         implements UserDetails, CredentialsContainer {
 
-    public static SundialUserDetails of(SundialUserAuthParams userAuthParams) {
+    public static SundialUserDetails of(Account account) {
 
         final var userDetails = new SundialUserDetails();
 
-        userDetails.setPassword(userAuthParams.getPassword());
-        userDetails.setId(userAuthParams.getId());
-        userDetails.setType(userAuthParams.getType());
-        userDetails.setName(userAuthParams.getName());
-        userDetails.setNickname(userAuthParams.getNickname());
+        userDetails.setPassword(account.getPassword());
+        userDetails.setId(account.getId());
+        userDetails.setType(account.getType());
+        userDetails.setName(account.getName());
+        userDetails.setNickname(account.getNickname());
         userDetails.setAuthorities(
-                Optional.ofNullable(userAuthParams.getRoles())
+                Optional.ofNullable(account.getRoles())
                         .map(roles -> roles.stream().map(
                                 role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role))
                                 .collect(Collectors.toSet()))
                         .orElse(Set.of()));
-        userDetails.setAccountNonExpired(userAuthParams.getState() != AccountState.Abandoned);
-        userDetails.setAccountNonLocked(userAuthParams.getState() != AccountState.Locked);
+        userDetails.setAccountNonExpired(account.getState() != AccountState.Abandoned);
+        userDetails.setAccountNonLocked(account.getState() != AccountState.Locked);
         userDetails.setCredentialsNonExpired(true);
-        userDetails.setEnabled(userAuthParams.getState() == AccountState.Active);
+        userDetails.setEnabled(account.getState() == AccountState.Active);
 
         return userDetails;
     }

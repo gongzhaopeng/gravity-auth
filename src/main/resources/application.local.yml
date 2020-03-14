@@ -1,0 +1,17 @@
+spring:
+  data:
+    mongodb:
+      uri: "mongodb://localhost:27017/accountcenter"
+  redis:
+    #    host: 192.168.30.200
+    database: 1
+  security:
+    login-page: http://sundial.benbenedu.cn:9001/xauth/login
+  thymeleaf:
+    prefix: classpath:/views/
+    suffix: .html
+    cache: false
+  cache:
+    cache-names: accounts, clients
+    caffeine:
+      spec: maximumSize=500, expireAfterWrite=120s

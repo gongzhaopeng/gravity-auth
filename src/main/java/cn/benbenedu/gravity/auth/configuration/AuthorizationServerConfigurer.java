@@ -1,7 +1,7 @@
 package cn.benbenedu.gravity.auth.configuration;
 
 import cn.benbenedu.gravity.auth.model.SundialUserDetails;
-import cn.benbenedu.gravity.auth.repository.ClientRepository;
+import cn.benbenedu.gravity.auth.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +40,7 @@ public class AuthorizationServerConfigurer
     private UserDetailsService userDetailsService;
     private RedisConnectionFactory redisConnectionFactory;
 
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
     public AuthorizationServerConfigurer(
@@ -48,14 +48,14 @@ public class AuthorizationServerConfigurer
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
             RedisConnectionFactory redisConnectionFactory,
-            ClientRepository clientRepository) {
+            ClientService clientService) {
 
         this.clientDetailsService = clientDetailsService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.redisConnectionFactory = redisConnectionFactory;
 
-        this.clientRepository = clientRepository;
+        this.clientService = clientService;
     }
 
     @Override
@@ -111,18 +111,16 @@ public class AuthorizationServerConfigurer
                 final var response =
                         (Map<String, Object>) super.convertAccessToken(token, authentication);
 
-                clientRepository.findClientAuthParamsByClientId(
-                        authentication.getOAuth2Request().getClientId())
-                        .ifPresent(params -> {
+                final var client = clientService.getClientByClientId(
+                        authentication.getOAuth2Request().getClientId());
+                if (client != null) {
+                    final var clientInfo = new HashMap<String, Object>();
+                    if (client.getOwner() != null) {
+                        clientInfo.put(CLIENT_OWNER, client.getOwner().getId());
+                    }
 
-                                    final var clientInfo = new HashMap<String, Object>();
-                                    if (params.getOwner() != null) {
-                                        clientInfo.put(CLIENT_OWNER, params.getOwner().getId());
-                                    }
-
-                                    response.put(CLIENT, clientInfo);
-                                }
-                        );
+                    response.put(CLIENT, clientInfo);
+                }
 
                 return response;
             }

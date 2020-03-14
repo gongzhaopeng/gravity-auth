@@ -1,8 +1,7 @@
 package cn.benbenedu.gravity.auth.service;
 
-import cn.benbenedu.gravity.auth.model.SundialClientDetails;
 import cn.benbenedu.gravity.auth.repository.ClientRepository;
-import cn.benbenedu.sundial.account.model.ClientState;
+import cn.benbenedu.sundial.account.model.Client;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,8 @@ public class ClientService {
     }
 
     @Cacheable
-    public SundialClientDetails getClientDetailsByClientId(String clientId) {
+    public Client getClientByClientId(String clientId) {
 
-        return clientRepository.findClientAuthParamsByClientId(clientId)
-                .filter(authParams ->
-                        authParams.getState() == ClientState.Active)
-                .map(SundialClientDetails::of)
-                .orElse(null);
+        return clientRepository.findByClientId(clientId).orElse(null);
     }
 }

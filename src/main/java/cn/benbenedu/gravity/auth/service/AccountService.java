@@ -23,7 +23,7 @@ public class AccountService {
     @Cacheable
     public SundialUserDetails getUserDetailsById(String id) {
 
-        return accountRepository.findUserAuthParamsById(id)
+        return accountRepository.findById(id)
                 .map(SundialUserDetails::of)
                 .orElse(null);
     }
@@ -32,7 +32,7 @@ public class AccountService {
     public SundialUserDetails getUserDetailsByMobile(String mobile)
             throws UsernameNotFoundException {
 
-        return accountRepository.findUserAuthParamsByMobile(mobile)
+        return accountRepository.findByMobile(mobile)
                 .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided mobile: " + mobile));
@@ -42,7 +42,7 @@ public class AccountService {
     public SundialUserDetails getUserDetailsByEmail(String email)
             throws UsernameNotFoundException {
 
-        return accountRepository.findUserAuthParamsByEmail(email)
+        return accountRepository.findByEmail(email)
                 .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided email: " + email));
@@ -52,7 +52,7 @@ public class AccountService {
     public SundialUserDetails getUserDetailsByIdNumber(String idNumber)
             throws UsernameNotFoundException {
 
-        return accountRepository.findUserAuthParamsByIdNumber(idNumber)
+        return accountRepository.findByIdNumber(idNumber)
                 .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided idNumber: " + idNumber));
