@@ -15,4 +15,6 @@ public interface AccountRepository
     Optional<Account> findByEmail(String email);
 
     Optional<Account> findByIdNumber(String idNumber);
+
+    Optional<Account> findByWechatUnionid(String wechatUnionid);
 }

@@ -3,4 +3,4 @@ spring:
     name: xauth
   cloud:
     config:
-      uri: http://sundial.benbenedu.cn:8888
+      uri: http://sd1.benbenedu.cn:8888

@@ -1,7 +1,7 @@
 package cn.benbenedu.gravity.auth.service;
 
-import cn.benbenedu.gravity.auth.model.SundialUserDetails;
 import cn.benbenedu.gravity.auth.repository.AccountRepository;
+import cn.benbenedu.sundial.account.model.Account;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,40 +21,45 @@ public class AccountService {
     }
 
     @Cacheable
-    public SundialUserDetails getUserDetailsById(String id) {
+    public Account getAccountById(String id) {
 
         return accountRepository.findById(id)
-                .map(SundialUserDetails::of)
                 .orElse(null);
     }
 
     @CachePut(key = "#result.id")
-    public SundialUserDetails getUserDetailsByMobile(String mobile)
+    public Account getAccountByMobile(String mobile)
             throws UsernameNotFoundException {
 
         return accountRepository.findByMobile(mobile)
-                .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided mobile: " + mobile));
     }
 
     @CachePut(key = "#result.id")
-    public SundialUserDetails getUserDetailsByEmail(String email)
+    public Account getAccountByEmail(String email)
             throws UsernameNotFoundException {
 
         return accountRepository.findByEmail(email)
-                .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided email: " + email));
     }
 
     @CachePut(key = "#result.id")
-    public SundialUserDetails getUserDetailsByIdNumber(String idNumber)
+    public Account getAccountByIdNumber(String idNumber)
             throws UsernameNotFoundException {
 
         return accountRepository.findByIdNumber(idNumber)
-                .map(SundialUserDetails::of)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided idNumber: " + idNumber));
+    }
+
+    @CachePut(key = "#result.id")
+    public Account getAccountByWechatUnionid(String wechatUnionid)
+            throws UsernameNotFoundException {
+
+        return accountRepository.findByWechatUnionid(wechatUnionid)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("No Account with provided wechat-unionid: " + wechatUnionid));
     }
 }

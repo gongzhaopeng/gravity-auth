@@ -7,6 +7,7 @@ public class WechatInfo {
 
     private String openid;
     private String unionid;
+    private String token;
     private WechatLogin latestLogin;
 
     @Data
