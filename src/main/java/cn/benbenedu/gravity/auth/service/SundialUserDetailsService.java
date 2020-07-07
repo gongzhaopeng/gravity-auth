@@ -21,6 +21,7 @@ public class SundialUserDetailsService
         implements UserDetailsService {
 
     private static final String WECHAT_UNIONID_PREFIX = "WECHAT#";
+    private static final String BYTEDANCE_OPENID_PREFIX = "BYTEDANCE#";
 
     private PasswordEncoder passwordEncoder;
     private AccountService accountService;
@@ -53,6 +54,12 @@ public class SundialUserDetailsService
             account = accountService.getAccountByWechatUnionid(wechatUnionid);
             account.setPassword(
                     passwordEncoder.encode(account.getWechat().getToken()));
+        } else if (username.startsWith(BYTEDANCE_OPENID_PREFIX)) {
+            final var byteDanceOpenid =
+                    username.substring(BYTEDANCE_OPENID_PREFIX.length());
+            account = accountService.getAccountByByteDanceOpenid(byteDanceOpenid);
+            account.setPassword(
+                    passwordEncoder.encode(account.getByteDance().getToken()));
         } else if (MobileUtility.isWellFormedMobileNumber(username)) {
             account = accountService.getAccountByMobile(username);
         } else if (EmailUtility.isWellFormedEmailAddress(username)) {

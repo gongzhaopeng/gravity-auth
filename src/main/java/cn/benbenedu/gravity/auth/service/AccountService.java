@@ -62,4 +62,13 @@ public class AccountService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No Account with provided wechat-unionid: " + wechatUnionid));
     }
+
+    @CachePut(key = "#result.id")
+    public Account getAccountByByteDanceOpenid(String byteDanceOpenid)
+            throws UsernameNotFoundException {
+
+        return accountRepository.findByByteDanceOpenid(byteDanceOpenid)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("No Account with provided ByteDance-openid: " + byteDanceOpenid));
+    }
 }

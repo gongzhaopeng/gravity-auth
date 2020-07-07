@@ -17,4 +17,6 @@ public interface AccountRepository
     Optional<Account> findByIdNumber(String idNumber);
 
     Optional<Account> findByWechatUnionid(String wechatUnionid);
+
+    Optional<Account> findByByteDanceOpenid(String byteDanceOpenid);
 }

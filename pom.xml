@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>xauth</artifactId>
-    <version>Mercury.0.0.1</version>
+    <version>Mercury.0.0.2</version>
     <name>auth</name>
     <description>Gravity:Auth.</description>
 

@@ -36,6 +36,8 @@ public class Account implements CredentialsContainer {
 
     private WechatInfo wechat;
 
+    private ByteDanceInfo byteDance;
+
     private AccountType type;
 
     private String name;
