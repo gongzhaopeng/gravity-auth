@@ -22,9 +22,10 @@ public class SundialUserDetailsService
 
     private static final String WECHAT_UNIONID_PREFIX = "WECHAT#";
     private static final String BYTEDANCE_OPENID_PREFIX = "BYTEDANCE#";
+    private static final String MOBILE_TOKEN_PREFIX = "MOBILETOKEN#";
 
-    private PasswordEncoder passwordEncoder;
-    private AccountService accountService;
+    final private PasswordEncoder passwordEncoder;
+    final private AccountService accountService;
 
     public SundialUserDetailsService(
             PasswordEncoder passwordEncoder,
@@ -48,6 +49,11 @@ public class SundialUserDetailsService
             account = Optional.ofNullable(accountService.getAccountById(username))
                     .orElseThrow(() ->
                             new UsernameNotFoundException("No Account with provided id: " + username));
+        } else if (username.startsWith(MOBILE_TOKEN_PREFIX)) {
+            final var mobile =
+                    username.substring(MOBILE_TOKEN_PREFIX.length());
+            account = accountService.getAccountByMobile(mobile);
+            account.setPassword(passwordEncoder.encode(account.getMobileToken()));
         } else if (username.startsWith(WECHAT_UNIONID_PREFIX)) {
             final var wechatUnionid =
                     username.substring(WECHAT_UNIONID_PREFIX.length());

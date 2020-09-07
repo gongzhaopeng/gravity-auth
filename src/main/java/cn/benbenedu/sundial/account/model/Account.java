@@ -34,6 +34,8 @@ public class Account implements CredentialsContainer {
     private Boolean emailVerified;
     private String password;
 
+    private String mobileToken;
+
     private WechatInfo wechat;
 
     private ByteDanceInfo byteDance;
